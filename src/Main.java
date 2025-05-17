@@ -1,15 +1,26 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        String src = """
+        int starttime;
+        int sum;
+        int x;
+        starttime = TIME;
+        sum = 0;
+        for (x=0; x<10; x=x+1) {
+            sum = sum + x;
         }
+        print(sum);
+        print(TIME - starttime);
+        """;
+
+        CharStream inputStream = CharStreams.fromString(src);
+        ScriptingLanguageLexer lexer = new ScriptingLanguageLexer(inputStream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ScriptingLanguageParser parser = new ScriptingLanguageParser(tokens);
+        parser.start();
     }
 }
