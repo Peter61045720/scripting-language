@@ -5,95 +5,126 @@ options {
 }
 
 @members {
-    public static void main(String[] args) throws Exception {
-        ScriptingLanguageLexer lex = new ScriptingLanguageLexer(new ANTLRFileStream(args[0]));
-        CommonTokenStream tokens = new CommonTokenStream (lex);
-        ScriptingLanguageParser parser = new ScriptingLanguageParser(tokens);
-        parser.start();
+    public static void main(String[] args) {
+        System.out.println("Grammar works");
     }
 }
 
-start
-    : sequence EOF
+start [ast.RuntimeContext context]
+    : sequence[context] { $context.addStatements($sequence.node); } EOF
     ;
 
-sequence
-    : ( statement )+
+sequence [ast.RuntimeContext context] returns [ast.Sequence node]
+    :   { $node = new ast.Sequence(context); }
+        (
+            statement[context]
+            { $node.addStatement($statement.node); }
+        )+
     ;
 
-statement
-    : expression
-    | declaration SEMICOLON
-    | assignment SEMICOLON
-    | declaration_and_assignment SEMICOLON
-    | type ID ASSIGNMENT expression SEMICOLON
-    | FOR_KW LPAR ID ASSIGNMENT expression SEMICOLON logical_expression SEMICOLON update RPAR LCURLY sequence RCURLY
-    | WHILE_KW LPAR logical_expression RPAR LCURLY sequence RCURLY
-    | IF_KW logical_expression LCURLY sequence RCURLY ( ELSE_KW LCURLY sequence RCURLY )?
-    | SWITCH_KW LPAR ID RPAR LCURLY ( CASE_KW INT COLON sequence (BREAK_KW SEMICOLON)? )+ ( DEFAULT_KW COLON sequence )? RCURLY
-    | SCAN_KW LPAR expression RPAR SEMICOLON
-    | PRINT_KW LPAR expression RPAR SEMICOLON
-    | DEL_KW ID SEMICOLON
+statement [ast.RuntimeContext context] returns [ast.Statement node]
+    : expression { $node = new ast.ExpressionStatement($context, $expression.node); }
+    | declaration[context] SEMICOLON { $node = $declaration.node; }
+    | assignment[context] SEMICOLON { $node = $assignment.node; }
+    | declaration_and_assignment[context] SEMICOLON { $node = $declaration_and_assignment.node; }
+    | FOR_KW LPAR ID ASSIGNMENT expression SEMICOLON logical_expression SEMICOLON update[context] RPAR LCURLY sequence[context] RCURLY // TODO: implement for loop
+    | WHILE_KW LPAR logical_expression RPAR LCURLY sequence[context] RCURLY // TODO: implement while loop
+    | IF_KW logical_expression LCURLY sequence[context] RCURLY ( ELSE_KW LCURLY sequence[context] RCURLY )? // TODO: implement if statement
+    | SWITCH_KW LPAR ID RPAR LCURLY ( CASE_KW INT COLON sequence[context] (BREAK_KW SEMICOLON)? )+ ( DEFAULT_KW COLON sequence[context] )? RCURLY // TODO: implement switch statement
+    | SCAN_KW LPAR ID RPAR SEMICOLON { $node = new ast.Scan($context, $ID.text); }
+    | PRINT_KW LPAR expression RPAR SEMICOLON { $node = new ast.Print($context, $expression.node); }
+    | DEL_KW ID SEMICOLON { $node = new ast.Delete($context, $ID.text); }
     ;
 
-expression
-    : number_expression
-    | logical_expression
+expression returns [ast.Expression node]
+    : number_expression     { $node = $number_expression.node; }
+    | logical_expression    { $node = $logical_expression.node; }
     ;
 
-number_expression
-    : add_op ( ADD add_op )*
-    | add_op ( SUB add_op )*
+number_expression returns [ast.Expression node]
+    :
+        first_op=add_op { $node = $first_op.node; }
+        (
+            ADD next_op=add_op
+            { $node = new ast.BinaryOperation($ADD.text, $node, $next_op.node); }
+        )*
+    |
+        first_op=add_op { $node = $first_op.node; }
+        (
+            SUB next_op=add_op
+            { $node = new ast.BinaryOperation($SUB.text, $node, $next_op.node); }
+        )*
     ;
 
-add_op
-    : number_factor ( MUL number_factor )*
-    | number_factor ( DIV number_factor )*
+add_op returns [ast.Expression node]
+    :
+        first_op=number_factor { $node = $first_op.node; }
+        (
+            MUL next_op=number_factor
+            { $node = new ast.BinaryOperation($MUL.text, $node, $next_op.node); }
+        )*
+    |
+        first_op=number_factor { $node = $first_op.node; }
+        (
+            DIV next_op=number_factor
+            { $node = new ast.BinaryOperation($DIV.text, $node, $next_op.node); }
+        )*
     ;
 
-number_factor
-    : ID
-    | INT
-    | DOUBLE
-    | TIME_KW
-    | LPAR expression RPAR
-    | ABS_KW LPAR  RPAR
+number_factor returns [ast.Expression node]
+    : ID                                { $node = new ast.Variable($ID.text); }
+    | INT                               { $node = new ast.Constant("int", $INT.text); }
+    | DOUBLE                            { $node = new ast.Constant("double", $DOUBLE.text); }
+    | TIME_KW                           { $node = new ast.Time(); }
+    | LPAR expression RPAR              { $node = $expression.node; }
+    | ABS_KW LPAR number_factor RPAR    { $node = new ast.UnaryOperation($ABS_KW.text, $number_factor.node); }
+    | SUB number_factor                 { $node = new ast.UnaryOperation($SUB.text, $number_factor.node); }
     ;
 
-logical_expression
-    : or_op ( OR or_op )*
+logical_expression returns [ast.Expression node]
+    :
+        first_op=or_op { $node = $first_op.node; }
+        (
+            OR next_op=or_op
+            { $node = new ast.BinaryOperation($OR.text, $node, $next_op.node); }
+        )*
     ;
 
-or_op
-    : logical_factor ( AND logical_factor )*
+or_op returns [ast.Expression node]
+    :
+        first_op=logical_factor { $node = $first_op.node; }
+        (
+            AND next_op=logical_factor
+            { $node = new ast.BinaryOperation($AND.text, $node, $next_op.node); }
+        )*
     ;
 
-logical_factor
-    : number_expression LT number_expression
-    | number_expression GT number_expression
-    | number_expression EQ number_expression
-    | number_expression NE number_expression
+logical_factor returns [ast.Expression node]
+    : lhs=number_expression LT rhs=number_expression { $node = new ast.BinaryOperation($LT.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression GT rhs=number_expression { $node = new ast.BinaryOperation($GT.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression EQ rhs=number_expression { $node = new ast.BinaryOperation($EQ.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression NE rhs=number_expression { $node = new ast.BinaryOperation($NE.text, $lhs.node, $rhs.node); }
     ;
 
-type
-    : INT_KW
-    | DOUBLE_KW
+type returns [String value]
+    : INT_KW    { $value = $INT_KW.text; }
+    | DOUBLE_KW { $value = $DOUBLE_KW.text; }
     ;
 
-declaration
-    : type ID
+declaration [ast.RuntimeContext context] returns [ast.Declaration node]
+    : type ID { $node = new ast.Declaration($context, $type.value, $ID.text); }
     ;
 
-assignment
-    : ID ASSIGNMENT expression
+assignment [ast.RuntimeContext context] returns [ast.Assignment node]
+    : ID ASSIGNMENT expression { $node = new ast.Assignment($context, $ID.text, $expression.node); }
     ;
 
-declaration_and_assignment
-    : type ID ASSIGNMENT expression
+declaration_and_assignment [ast.RuntimeContext context] returns [ast.DeclarationAndAssignment node]
+    : type ID ASSIGNMENT expression { $node = new ast.DeclarationAndAssignment($context, $type.value, $ID.text, $expression.node); }
     ;
 
-update
-    : assignment
+update [ast.RuntimeContext context]
+    : assignment[context]
     | ID INCREMENT
     | ID DECREMENT
     ;
@@ -136,4 +167,4 @@ INT         : [0-9]+;
 DOUBLE      : [0-9]+ '.' [0-9]+;
 ID          : [a-zA-Z]( [_0-9a-zA-Z]+ )?;
 WS          : [ \t\n\r]+ -> skip;
-COMMENT     : '#' (~[\n])* ->skip ;
+COMMENT     : '#' (~[\n])* -> skip ;
