@@ -65,7 +65,6 @@ COMMENT=42
 'int'=23
 'double'=24
 'del'=25
-'abs'=26
 'TIME'=27
 'print'=28
 'scan'=29

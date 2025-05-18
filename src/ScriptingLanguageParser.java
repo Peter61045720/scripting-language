@@ -42,9 +42,9 @@ public class ScriptingLanguageParser extends Parser {
 		return new String[] {
 			null, "'+'", "'-'", "'*'", "'/'", "'%'", "'++'", "'--'", "';'", "':'", 
 			"'?'", "'='", "'=='", "'!='", "'||'", "'&&'", "'!'", "'<'", "'>'", "'('", 
-			"')'", "'{'", "'}'", "'int'", "'double'", "'del'", "'abs'", "'TIME'", 
-			"'print'", "'scan'", "'for'", "'while'", "'if'", "'else'", "'switch'", 
-			"'case'", "'break'", "'default'"
+			"')'", "'{'", "'}'", "'int'", "'double'", "'del'", null, "'TIME'", "'print'", 
+			"'scan'", "'for'", "'while'", "'if'", "'else'", "'switch'", "'case'", 
+			"'break'", "'default'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();

@@ -192,7 +192,7 @@ RCURLY      : '}';
 INT_KW      : 'int';
 DOUBLE_KW   : 'double';
 DEL_KW      : 'del';
-ABS_KW      : 'abs';
+ABS_KW      : 'abs' | 'ABS' | 'Abs';
 TIME_KW     : 'TIME';
 PRINT_KW    : 'print';
 SCAN_KW     : 'scan';
