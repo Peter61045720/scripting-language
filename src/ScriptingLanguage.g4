@@ -23,12 +23,14 @@ sequence [ast.RuntimeContext context] returns [ast.Sequence node]
     ;
 
 statement [ast.RuntimeContext context] returns [ast.Statement node]
-    : expression { $node = new ast.ExpressionStatement($context, $expression.node); }
+    : expression SEMICOLON { $node = new ast.ExpressionStatement($context, $expression.node); }
     | declaration[context] SEMICOLON { $node = $declaration.node; }
     | assignment[context] SEMICOLON { $node = $assignment.node; }
     | declaration_and_assignment[context] SEMICOLON { $node = $declaration_and_assignment.node; }
     | FOR_KW LPAR ID ASSIGNMENT expression SEMICOLON logical_expression SEMICOLON update[context] RPAR LCURLY sequence[context] RCURLY // TODO: implement for loop
-    | WHILE_KW LPAR logical_expression RPAR LCURLY sequence[context] RCURLY // TODO: implement while loop
+    |
+        WHILE_KW LPAR condition=logical_expression RPAR LCURLY while_body=sequence[context] RCURLY
+        { $node = new ast.While($context, $condition.node, $while_body.node); }
     |
         { ast.Statement false_body_node = null; }
         IF_KW condition=logical_expression LCURLY true_body=sequence[context] RCURLY
@@ -83,6 +85,10 @@ number_factor returns [ast.Expression node]
     | LPAR expression RPAR              { $node = $expression.node; }
     | ABS_KW LPAR number_factor RPAR    { $node = new ast.UnaryOperation($ABS_KW.text, $number_factor.node); }
     | SUB number_factor                 { $node = new ast.UnaryOperation($SUB.text, $number_factor.node); }
+    | ID INCREMENT                      { $node = new ast.Increment($ID.text); }
+    | ID DECREMENT                      { $node = new ast.Decrement($ID.text); }
+    | INCREMENT ID                      { $node = new ast.Increment($ID.text); }
+    | DECREMENT ID                      { $node = new ast.Decrement($ID.text); }
     ;
 
 logical_expression returns [ast.Expression node]
@@ -130,8 +136,6 @@ declaration_and_assignment [ast.RuntimeContext context] returns [ast.Declaration
 
 update [ast.RuntimeContext context]
     : assignment[context]
-    | ID INCREMENT
-    | ID DECREMENT
     ;
 
 ADD         : '+';

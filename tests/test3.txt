@@ -1,0 +1,39 @@
+int i = 0;
+while (i < 10) {
+    print(i); # 0.0, 1.0, ..., 9.0
+    i = i + 1;
+}
+
+print(1111111111111); # csak elválasztónak
+
+int open_interval_start = 5;
+int open_interval_end = 9;
+
+i = 6;
+
+while (open_interval_start < i && i < open_interval_end) {
+    print(i); # 6.0, 7.0, 8.0
+    i++;
+}
+
+print(1111111111111); # csak elválasztónak
+
+int a = 0;
+double b = 10;
+
+print(a++); # 1.0, nincs különbség a post- és pre változat között
+print(a);   # 1.0
+
+print(++b); # 11.0, nincs különbség a post- és pre változat között
+print(b);   # 11.0
+
+print(1111111111111); # csak elválasztónak
+
+print(a--); # 0.0, nincs különbség a post- és pre változat között
+print(a);   # 0.0
+
+print(--b); # 10.0, nincs különbség a post- és pre változat között
+print(b);   # 10.0
+
+while(a){print(3.14);}      # nem ír ki semmit, mert a == 0.0, ami hamisra értékelődik ki
+while(100<1){print(3.14);}  # nem ír ki semmit, mert 100 < 1 hamisra értékelődik ki
