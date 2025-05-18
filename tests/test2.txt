@@ -1,0 +1,49 @@
+# Fájl tartalma: if, if-else bemutatása
+
+int true = 1;
+int false = 0;
+
+if (true) {
+    print(200);         # 200
+}
+
+if (true && false) {
+    print(1);           # nem írja ki
+} else {
+    print(-1);          # -1
+}
+
+if (13 > 20) {
+    print(13);          # nem történik semmi
+}
+
+if(true||false){print(500);if(500){print(555);}} # 500, majd 555 (nincs baja a space-ek és enter-ek teljes hiányától)
+
+    int         output
+    =
+    0
+    ;
+            if (
+                    1 < 2
+    && 2
+    <
+    3)          {
+output = 4
+;
+if      (
+output
+                                )      {
+                    print   (
+    output
+                    )
+                    ;
+}
+            }
+
+# Ezt a szörnyűséget is feldolgozza; 4-et ír ki a konzolra.
+
+if (true) {
+    double global = 1.3;
+}
+
+print(global); # 1.3, mert minden változó globális

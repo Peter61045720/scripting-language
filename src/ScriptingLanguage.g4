@@ -29,7 +29,11 @@ statement [ast.RuntimeContext context] returns [ast.Statement node]
     | declaration_and_assignment[context] SEMICOLON { $node = $declaration_and_assignment.node; }
     | FOR_KW LPAR ID ASSIGNMENT expression SEMICOLON logical_expression SEMICOLON update[context] RPAR LCURLY sequence[context] RCURLY // TODO: implement for loop
     | WHILE_KW LPAR logical_expression RPAR LCURLY sequence[context] RCURLY // TODO: implement while loop
-    | IF_KW logical_expression LCURLY sequence[context] RCURLY ( ELSE_KW LCURLY sequence[context] RCURLY )? // TODO: implement if statement
+    |
+        { ast.Statement false_body_node = null; }
+        IF_KW condition=logical_expression LCURLY true_body=sequence[context] RCURLY
+        ( ELSE_KW LCURLY false_body=sequence[context] RCURLY { false_body_node = $false_body.node; } )?
+        { $node = new ast.If($context, $condition.node, $true_body.node, false_body_node); }
     | SWITCH_KW LPAR ID RPAR LCURLY ( CASE_KW INT COLON sequence[context] (BREAK_KW SEMICOLON)? )+ ( DEFAULT_KW COLON sequence[context] )? RCURLY // TODO: implement switch statement
     | SCAN_KW LPAR ID RPAR SEMICOLON { $node = new ast.Scan($context, $ID.text); }
     | PRINT_KW LPAR expression RPAR SEMICOLON { $node = new ast.Print($context, $expression.node); }
@@ -100,7 +104,8 @@ or_op returns [ast.Expression node]
     ;
 
 logical_factor returns [ast.Expression node]
-    : lhs=number_expression LT rhs=number_expression { $node = new ast.BinaryOperation($LT.text, $lhs.node, $rhs.node); }
+    : number_expression                              { $node = $number_expression.node; }
+    | lhs=number_expression LT rhs=number_expression { $node = new ast.BinaryOperation($LT.text, $lhs.node, $rhs.node); }
     | lhs=number_expression GT rhs=number_expression { $node = new ast.BinaryOperation($GT.text, $lhs.node, $rhs.node); }
     | lhs=number_expression EQ rhs=number_expression { $node = new ast.BinaryOperation($EQ.text, $lhs.node, $rhs.node); }
     | lhs=number_expression NE rhs=number_expression { $node = new ast.BinaryOperation($NE.text, $lhs.node, $rhs.node); }
