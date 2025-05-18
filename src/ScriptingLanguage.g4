@@ -45,6 +45,7 @@ statement [ast.RuntimeContext context] returns [ast.Statement node]
 expression returns [ast.Expression node]
     : number_expression     { $node = $number_expression.node; }
     | logical_expression    { $node = $logical_expression.node; }
+    | ternary_expression    { $node = $ternary_expression.node; }
     ;
 
 number_expression returns [ast.Expression node]
@@ -102,19 +103,24 @@ logical_expression returns [ast.Expression node]
 
 or_op returns [ast.Expression node]
     :
-        first_op=logical_factor { $node = $first_op.node; }
+        first_op=and_op { $node = $first_op.node; }
         (
-            AND next_op=logical_factor
+            AND next_op=and_op
             { $node = new ast.BinaryOperation($AND.text, $node, $next_op.node); }
         )*
     ;
 
+and_op returns [ast.Expression node]
+    : logical_factor        { $node = $logical_factor.node; }
+    | NOT and_op            { $node = new ast.UnaryOperation($NOT.text, $and_op.node);  }
+    ;
+
 logical_factor returns [ast.Expression node]
-    : number_expression                              { $node = $number_expression.node; }
-    | lhs=number_expression LT rhs=number_expression { $node = new ast.BinaryOperation($LT.text, $lhs.node, $rhs.node); }
-    | lhs=number_expression GT rhs=number_expression { $node = new ast.BinaryOperation($GT.text, $lhs.node, $rhs.node); }
-    | lhs=number_expression EQ rhs=number_expression { $node = new ast.BinaryOperation($EQ.text, $lhs.node, $rhs.node); }
-    | lhs=number_expression NE rhs=number_expression { $node = new ast.BinaryOperation($NE.text, $lhs.node, $rhs.node); }
+    : number_expression                                 { $node = $number_expression.node; }
+    | lhs=number_expression LT rhs=number_expression    { $node = new ast.BinaryOperation($LT.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression GT rhs=number_expression    { $node = new ast.BinaryOperation($GT.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression EQ rhs=number_expression    { $node = new ast.BinaryOperation($EQ.text, $lhs.node, $rhs.node); }
+    | lhs=number_expression NE rhs=number_expression    { $node = new ast.BinaryOperation($NE.text, $lhs.node, $rhs.node); }
     ;
 
 type returns [String value]
@@ -138,6 +144,12 @@ update [ast.RuntimeContext context]
     : assignment[context]
     ;
 
+ternary_expression returns [ast.Expression node]
+    :
+        condition=logical_expression QUESTION true_expression=expression COLON false_expression=expression
+        { $node = new ast.Ternary($condition.node, $true_expression.node, $false_expression.node); }
+    ;
+
 ADD         : '+';
 SUB         : '-';
 MUL         : '*';
@@ -146,11 +158,13 @@ INCREMENT   : '++';
 DECREMENT   : '--';
 SEMICOLON   : ';';
 COLON       : ':';
+QUESTION    : '?';
 ASSIGNMENT  : '=';
 EQ          : '==';
 NE          : '!=';
 OR          : '||';
 AND         : '&&';
+NOT         : '!';
 LT          : '<';
 GT          : '>';
 LPAR        : '(';

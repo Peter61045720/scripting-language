@@ -124,6 +124,18 @@ public class ScriptingLanguageBaseListener implements ScriptingLanguageListener 
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAnd_op(ScriptingLanguageParser.And_opContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAnd_op(ScriptingLanguageParser.And_opContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLogical_factor(ScriptingLanguageParser.Logical_factorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -191,6 +203,18 @@ public class ScriptingLanguageBaseListener implements ScriptingLanguageListener 
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUpdate(ScriptingLanguageParser.UpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTernary_expression(ScriptingLanguageParser.Ternary_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTernary_expression(ScriptingLanguageParser.Ternary_expressionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

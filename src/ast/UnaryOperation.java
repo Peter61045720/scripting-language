@@ -15,6 +15,7 @@ public class UnaryOperation extends Expression {
 
         switch (this.operator) {
             case "-": return new Value(value.getType(), -value.getValue());
+            case "!": return new Value(value.getType(), value.getValue() == 0 ? 1 : 0);
             case "abs": return new Value(value.getType(), Math.abs(value.getValue()));
             default: return null;
         }

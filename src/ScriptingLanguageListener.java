@@ -97,6 +97,16 @@ public interface ScriptingLanguageListener extends ParseTreeListener {
 	 */
 	void exitOr_op(ScriptingLanguageParser.Or_opContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ScriptingLanguageParser#and_op}.
+	 * @param ctx the parse tree
+	 */
+	void enterAnd_op(ScriptingLanguageParser.And_opContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScriptingLanguageParser#and_op}.
+	 * @param ctx the parse tree
+	 */
+	void exitAnd_op(ScriptingLanguageParser.And_opContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ScriptingLanguageParser#logical_factor}.
 	 * @param ctx the parse tree
 	 */
@@ -156,4 +166,14 @@ public interface ScriptingLanguageListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUpdate(ScriptingLanguageParser.UpdateContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScriptingLanguageParser#ternary_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterTernary_expression(ScriptingLanguageParser.Ternary_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScriptingLanguageParser#ternary_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitTernary_expression(ScriptingLanguageParser.Ternary_expressionContext ctx);
 }

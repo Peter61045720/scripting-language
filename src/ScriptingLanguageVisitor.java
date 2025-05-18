@@ -64,6 +64,12 @@ public interface ScriptingLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOr_op(ScriptingLanguageParser.Or_opContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScriptingLanguageParser#and_op}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAnd_op(ScriptingLanguageParser.And_opContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScriptingLanguageParser#logical_factor}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -99,4 +105,10 @@ public interface ScriptingLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUpdate(ScriptingLanguageParser.UpdateContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScriptingLanguageParser#ternary_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTernary_expression(ScriptingLanguageParser.Ternary_expressionContext ctx);
 }
