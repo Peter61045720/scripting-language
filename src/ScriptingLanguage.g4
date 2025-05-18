@@ -27,7 +27,12 @@ statement [ast.RuntimeContext context] returns [ast.Statement node]
     | declaration[context] SEMICOLON { $node = $declaration.node; }
     | assignment[context] SEMICOLON { $node = $assignment.node; }
     | declaration_and_assignment[context] SEMICOLON { $node = $declaration_and_assignment.node; }
-    | FOR_KW LPAR ID ASSIGNMENT expression SEMICOLON logical_expression SEMICOLON update[context] RPAR LCURLY sequence[context] RCURLY // TODO: implement for loop
+    |
+        FOR_KW LPAR initialization[context] SEMICOLON
+        condition=logical_expression SEMICOLON
+        increment[context] RPAR
+        LCURLY for_body=sequence[context] RCURLY
+        { $node = new ast.For($context, $initialization.node, $condition.node, $increment.node, $for_body.node); }
     |
         WHILE_KW LPAR condition=logical_expression RPAR LCURLY while_body=sequence[context] RCURLY
         { $node = new ast.While($context, $condition.node, $while_body.node); }
@@ -75,6 +80,12 @@ add_op returns [ast.Expression node]
         (
             DIV next_op=number_factor
             { $node = new ast.BinaryOperation($DIV.text, $node, $next_op.node); }
+        )*
+    |
+        first_op=number_factor { $node = $first_op.node; }
+        (
+            MOD next_op=number_factor
+            { $node = new ast.BinaryOperation($MOD.text, $node, $next_op.node); }
         )*
     ;
 
@@ -140,8 +151,14 @@ declaration_and_assignment [ast.RuntimeContext context] returns [ast.Declaration
     : type ID ASSIGNMENT expression { $node = new ast.DeclarationAndAssignment($context, $type.value, $ID.text, $expression.node); }
     ;
 
-update [ast.RuntimeContext context]
-    : assignment[context]
+initialization [ast.RuntimeContext context] returns [ast.Statement node]
+    : assignment[context]                   { $node = $assignment.node; }
+    | declaration_and_assignment[context]   { $node = $declaration_and_assignment.node; }
+    ;
+
+increment [ast.RuntimeContext context] returns [ast.Statement node]
+    : assignment[context]   { $node = $assignment.node; }
+    | number_expression     { $node = new ast.ExpressionStatement($context, $number_expression.node); }
     ;
 
 ternary_expression returns [ast.Expression node]
@@ -154,6 +171,7 @@ ADD         : '+';
 SUB         : '-';
 MUL         : '*';
 DIV         : '/';
+MOD         : '%';
 INCREMENT   : '++';
 DECREMENT   : '--';
 SEMICOLON   : ';';

@@ -1,0 +1,12 @@
+# Fájl tartalma: "Példa input #1" a https://okt.inf.szte.hu/fordprog/gyakorlat/projekt/ oldalról
+
+int starttime;
+int sum;
+int x;
+starttime = TIME;
+sum = 0;
+for (x=0; x<10; x=x+1) {
+  sum = sum + x;
+}
+print(sum);
+print(TIME - starttime);

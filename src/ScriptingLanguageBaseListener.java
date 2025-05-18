@@ -196,13 +196,25 @@ public class ScriptingLanguageBaseListener implements ScriptingLanguageListener 
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUpdate(ScriptingLanguageParser.UpdateContext ctx) { }
+	@Override public void enterInitialization(ScriptingLanguageParser.InitializationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUpdate(ScriptingLanguageParser.UpdateContext ctx) { }
+	@Override public void exitInitialization(ScriptingLanguageParser.InitializationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIncrement(ScriptingLanguageParser.IncrementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIncrement(ScriptingLanguageParser.IncrementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

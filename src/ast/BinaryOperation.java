@@ -21,6 +21,7 @@ public class BinaryOperation extends Expression {
             case "-": return new Value(lhsValue.getType(), lhsValue.getValue() - rhsValue.getValue());
             case "*": return new Value(lhsValue.getType(), lhsValue.getValue() * rhsValue.getValue());
             case "/": return new Value(lhsValue.getType(), lhsValue.getValue() / rhsValue.getValue());
+            case "%": return new Value(lhsValue.getType(), lhsValue.getValue() % rhsValue.getValue());
             case "==": return new Value(lhsValue.getType(), lhsValue.getValue() == rhsValue.getValue() ? 1 : 0);
             case "!=": return new Value(lhsValue.getType(), lhsValue.getValue() != rhsValue.getValue() ? 1 : 0);
             case "||": return new Value(lhsValue.getType(), lhsValue.getValue() != 0 || rhsValue.getValue() != 0 ? 1 : 0);

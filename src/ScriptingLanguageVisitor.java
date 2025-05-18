@@ -100,11 +100,17 @@ public interface ScriptingLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclaration_and_assignment(ScriptingLanguageParser.Declaration_and_assignmentContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScriptingLanguageParser#update}.
+	 * Visit a parse tree produced by {@link ScriptingLanguageParser#initialization}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUpdate(ScriptingLanguageParser.UpdateContext ctx);
+	T visitInitialization(ScriptingLanguageParser.InitializationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScriptingLanguageParser#increment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrement(ScriptingLanguageParser.IncrementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScriptingLanguageParser#ternary_expression}.
 	 * @param ctx the parse tree

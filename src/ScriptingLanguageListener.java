@@ -157,15 +157,25 @@ public interface ScriptingLanguageListener extends ParseTreeListener {
 	 */
 	void exitDeclaration_and_assignment(ScriptingLanguageParser.Declaration_and_assignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScriptingLanguageParser#update}.
+	 * Enter a parse tree produced by {@link ScriptingLanguageParser#initialization}.
 	 * @param ctx the parse tree
 	 */
-	void enterUpdate(ScriptingLanguageParser.UpdateContext ctx);
+	void enterInitialization(ScriptingLanguageParser.InitializationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScriptingLanguageParser#update}.
+	 * Exit a parse tree produced by {@link ScriptingLanguageParser#initialization}.
 	 * @param ctx the parse tree
 	 */
-	void exitUpdate(ScriptingLanguageParser.UpdateContext ctx);
+	void exitInitialization(ScriptingLanguageParser.InitializationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScriptingLanguageParser#increment}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncrement(ScriptingLanguageParser.IncrementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScriptingLanguageParser#increment}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncrement(ScriptingLanguageParser.IncrementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ScriptingLanguageParser#ternary_expression}.
 	 * @param ctx the parse tree
